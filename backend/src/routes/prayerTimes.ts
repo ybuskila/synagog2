@@ -9,16 +9,15 @@ router.get('/weekly', authMiddleware, async (req, res) => {
   res.json({ schedule });
 });
 
+const DEFAULT_TIMES = { shacharit: '06:30', mincha: '13:15', arvit: '19:00' };
+
 router.get('/:date', async (req, res) => {
   const { date } = req.params;
   if (date === 'weekly' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return res.status(400).json({ error: 'Invalid date format (YYYY-MM-DD)' });
   }
   const times = await getPrayerTimes(date);
-  if (!times) {
-    return res.status(404).json({ error: 'Prayer times not found' });
-  }
-  res.json(times);
+  res.json(times || { date, ...DEFAULT_TIMES });
 });
 
 router.post('/', authMiddleware, async (req, res) => {
