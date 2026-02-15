@@ -18,6 +18,11 @@ export interface WeeklyEntry {
   arvit: string;
 }
 
+interface PrayerTimesData {
+  _weekly?: WeeklyEntry[];
+  [key: string]: PrayerTimeRecord | WeeklyEntry[] | undefined;
+}
+
 const DEFAULT_TIMES: PrayerTimeRecord = {
   date: '',
   shacharit: '06:30',
@@ -25,7 +30,7 @@ const DEFAULT_TIMES: PrayerTimeRecord = {
   arvit: '19:00',
 };
 
-function loadData(): Record<string, PrayerTimeRecord> & { _weekly?: WeeklyEntry[] } {
+function loadData(): PrayerTimesData {
   try {
     const dir = path.dirname(DATA_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -36,7 +41,7 @@ function loadData(): Record<string, PrayerTimeRecord> & { _weekly?: WeeklyEntry[
   }
 }
 
-function saveData(data: Record<string, PrayerTimeRecord> & { _weekly?: WeeklyEntry[] }) {
+function saveData(data: PrayerTimesData) {
   const dir = path.dirname(DATA_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
@@ -44,8 +49,9 @@ function saveData(data: Record<string, PrayerTimeRecord> & { _weekly?: WeeklyEnt
 
 export async function getPrayerTimes(date: string): Promise<PrayerTimeRecord | null> {
   const data = loadData();
-  if (data[date]) return data[date];
-  const weekly = data._weekly as WeeklyEntry[] | undefined;
+  const byDate = data[date];
+  if (byDate && !Array.isArray(byDate)) return byDate;
+  const weekly = data._weekly;
   if (weekly && weekly.length > 0) {
     const d = new Date(date);
     const dayOfWeek = d.getDay();
@@ -71,5 +77,5 @@ export async function saveWeeklySchedule(schedule: WeeklyEntry[]): Promise<void>
 
 export async function getWeeklySchedule(): Promise<WeeklyEntry[]> {
   const data = loadData();
-  return (data._weekly as WeeklyEntry[]) ?? [];
+  return data._weekly ?? [];
 }
