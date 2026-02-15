@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
@@ -12,7 +11,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { savePrayerTimes, saveWeeklySchedule, fetchPrayerTimes, fetchWeeklySchedule } from '../services/api';
-import { PrayerTimesForDate } from '../types';
+import { TimePickerInput } from '../components/TimePickerInput';
 
 const PRAYER_LABELS: Record<string, string> = {
   shacharit: 'שחרית',
@@ -113,41 +112,38 @@ export function PrayerTimesForm() {
             <Text style={styles.dayLabel}>{label}</Text>
             <View style={styles.row}>
               <Text style={styles.label}>{PRAYER_LABELS.shacharit}</Text>
-              <TextInput
-                style={styles.input}
-                value={weekly[d]?.shacharit ?? ''}
-                onChangeText={(v) => {
+              <TimePickerInput
+                value={weekly[d]?.shacharit ?? '06:30'}
+                onChange={(v) => {
                   const next = [...weekly];
                   next[d] = { ...next[d], shacharit: v };
                   setWeekly(next);
                 }}
-                placeholder="06:30"
+                style={styles.input}
               />
             </View>
             <View style={styles.row}>
               <Text style={styles.label}>{PRAYER_LABELS.mincha}</Text>
-              <TextInput
-                style={styles.input}
-                value={weekly[d]?.mincha ?? ''}
-                onChangeText={(v) => {
+              <TimePickerInput
+                value={weekly[d]?.mincha ?? '13:15'}
+                onChange={(v) => {
                   const next = [...weekly];
                   next[d] = { ...next[d], mincha: v };
                   setWeekly(next);
                 }}
-                placeholder="13:15"
+                style={styles.input}
               />
             </View>
             <View style={styles.row}>
               <Text style={styles.label}>{PRAYER_LABELS.arvit}</Text>
-              <TextInput
-                style={styles.input}
-                value={weekly[d]?.arvit ?? ''}
-                onChangeText={(v) => {
+              <TimePickerInput
+                value={weekly[d]?.arvit ?? '19:00'}
+                onChange={(v) => {
                   const next = [...weekly];
                   next[d] = { ...next[d], arvit: v };
                   setWeekly(next);
                 }}
-                placeholder="19:00"
+                style={styles.input}
               />
             </View>
           </View>
@@ -168,15 +164,15 @@ export function PrayerTimesForm() {
       <Text style={styles.dateLabel}>{date}</Text>
       <View style={styles.row}>
         <Text style={styles.label}>{PRAYER_LABELS.shacharit}</Text>
-        <TextInput style={styles.input} value={shacharit} onChangeText={setShacharit} placeholder="06:30" />
+        <TimePickerInput value={shacharit} onChange={setShacharit} style={styles.input} />
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>{PRAYER_LABELS.mincha}</Text>
-        <TextInput style={styles.input} value={mincha} onChangeText={setMincha} placeholder="13:15" />
+        <TimePickerInput value={mincha} onChange={setMincha} style={styles.input} />
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>{PRAYER_LABELS.arvit}</Text>
-        <TextInput style={styles.input} value={arvit} onChangeText={setArvit} placeholder="19:00" />
+        <TimePickerInput value={arvit} onChange={setArvit} style={styles.input} />
       </View>
       <TouchableOpacity
         style={[styles.button, saving && styles.buttonDisabled]}

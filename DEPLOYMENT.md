@@ -101,14 +101,25 @@ eas submit --platform ios
 
 ---
 
-## 4. Web App (Optional)
+## 4. Deploy Client (Web) to Vercel
 
+1. Go to [vercel.com](https://vercel.com) and sign in (e.g. with GitHub).
+2. **Add New Project** → Import your repository.
+3. Set **Root Directory**: click **Edit** and choose **`mobile`**.
+4. Vercel will use `mobile/vercel.json`:
+   - Build: `npx expo export -p web`
+   - Output: `dist`
+5. Add **Environment Variable** (optional, for production API):
+   - Name: `EXPO_PUBLIC_API_URL`
+   - Value: `https://YOUR-BACKEND-URL/api` (your Railway/Render API URL + `/api`)
+6. Click **Deploy**. The site will be at `https://your-project.vercel.app`.
+
+**Local web build:**
 ```bash
 cd mobile
-npx expo export --platform web
+npm run build:web
 ```
-
-Deploy the `dist/` folder to Vercel, Netlify, or any static host.
+Then deploy the `dist/` folder to any static host.
 
 ---
 
